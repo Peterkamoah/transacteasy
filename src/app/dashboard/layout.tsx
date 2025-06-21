@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -29,14 +30,18 @@ export default function DashboardLayout({
 
   return (
     <AppProvider>
-      <SidebarProvider>
+      {user ? (
+        <SidebarProvider>
           <Sidebar>
             <SidebarNav />
           </Sidebar>
           <SidebarInset>
-            {user ? children : <LoginOverlay />}
+            {children}
           </SidebarInset>
-      </SidebarProvider>
+        </SidebarProvider>
+      ) : (
+        <LoginOverlay />
+      )}
     </AppProvider>
   );
 }
