@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { getBusinessName } from '@/lib/utils';
-import type { Invoice } from '@/lib/types';
+import type { Invoice, User } from '@/lib/types';
 import { format } from 'date-fns';
 import { KycStatusBadge } from '../kyc-status-badge';
 
@@ -11,13 +11,14 @@ type InvoiceDetailsDialogProps = {
   isOpen: boolean;
   onClose: () => void;
   invoice: Invoice;
+  users: User[];
 }
 
-export function InvoiceDetailsDialog({ isOpen, onClose, invoice }: InvoiceDetailsDialogProps) {
+export function InvoiceDetailsDialog({ isOpen, onClose, invoice, users }: InvoiceDetailsDialogProps) {
   if (!invoice) return null;
 
-  const supplierName = getBusinessName(invoice.supplier_user_id);
-  const importerName = getBusinessName(invoice.importer_user_id);
+  const supplierName = getBusinessName(invoice.supplier_user_id, users);
+  const importerName = getBusinessName(invoice.importer_user_id, users);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

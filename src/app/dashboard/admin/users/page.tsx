@@ -8,7 +8,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, PlusCircle, Edit, Trash2, Eye } from 'lucide-react';
-import { users as mockUsers } from '@/lib/data';
 import type { User } from '@/lib/types';
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,32 +16,25 @@ import { DeleteUserDialog } from '@/components/dashboard/admin/delete-user-dialo
 import { EditUserForm } from '@/components/dashboard/admin/edit-user-form';
 import { getInitials } from '@/lib/utils';
 import { KycStatusBadge } from '@/components/dashboard/kyc-status-badge';
+import { useAppContext } from '@/context/app-context';
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>(mockUsers);
+  const { users, addUser, updateUser, deleteUser } = useAppContext();
   const [isCreateOpen, setCreateOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   
   const handleUserCreated = (newUser: Omit<User, 'user_id'|'created_at'|'updated_at'|'is_active'|'kyc_status'>) => {
-    const user: User = {
-      ...newUser,
-      user_id: `user${Date.now()}`,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      is_active: true,
-      kyc_status: 'pending',
-    };
-    setUsers(prev => [user, ...prev]);
+    addUser(newUser);
     setCreateOpen(false);
   }
 
   const handleUserUpdated = (updatedUser: User) => {
-    setUsers(prev => prev.map(u => u.user_id === updatedUser.user_id ? updatedUser : u));
+    updateUser(updatedUser);
     setEditingUser(null);
   }
 
   const handleUserDeleted = (userId: string) => {
-    setUsers(prev => prev.filter(u => u.user_id !== userId));
+    deleteUser(userId);
   }
 
   return (

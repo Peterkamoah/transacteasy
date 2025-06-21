@@ -3,7 +3,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Separator } from '@/components/ui/separator';
 import { getBusinessName } from '@/lib/utils';
-import type { Invoice, Receipt } from '@/lib/types';
+import type { Invoice, Receipt, User } from '@/lib/types';
 import { format } from 'date-fns';
 import { CheckCircle, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,9 +14,10 @@ type InvoiceReceiptDialogProps = {
   onClose: () => void;
   invoice: Invoice;
   receipt?: Receipt;
+  users: User[];
 }
 
-export function InvoiceReceiptDialog({ isOpen, onClose, invoice, receipt }: InvoiceReceiptDialogProps) {
+export function InvoiceReceiptDialog({ isOpen, onClose, invoice, receipt, users }: InvoiceReceiptDialogProps) {
   const { toast } = useToast();
 
   if (!invoice || !receipt) return (
@@ -39,8 +40,8 @@ export function InvoiceReceiptDialog({ isOpen, onClose, invoice, receipt }: Invo
     });
   }
 
-  const supplierName = getBusinessName(invoice.supplier_user_id);
-  const importerName = getBusinessName(invoice.importer_user_id);
+  const supplierName = getBusinessName(invoice.supplier_user_id, users);
+  const importerName = getBusinessName(invoice.importer_user_id, users);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

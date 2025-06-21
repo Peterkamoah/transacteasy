@@ -9,8 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, PlusCircle, CreditCard, Receipt, Eye, QrCode } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
-import { invoices as mockInvoices, receipts as mockReceipts } from '@/lib/data';
-import type { Invoice, InvoiceStatus, Receipt as ReceiptType } from '@/lib/types';
+import type { Invoice, Receipt as ReceiptType } from '@/lib/types';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { CreateInvoiceForm } from '@/components/dashboard/invoices/create-invoice-form';
@@ -19,34 +18,43 @@ import { QrCodeDialog } from '@/components/dashboard/invoices/qr-code-dialog';
 import { InvoiceDetailsDialog } from '@/components/dashboard/invoices/invoice-details-dialog';
 import { InvoiceReceiptDialog } from '@/components/dashboard/invoices/invoice-receipt-dialog';
 import { KycStatusBadge } from '@/components/dashboard/kyc-status-badge';
+import { useAppContext } from '@/context/app-context';
 
 export default function InvoicesPage() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [invoices, setInvoices] = useState<Invoice[]>(mockInvoices);
+  const { invoices, receipts, users, addInvoice, updateInvoiceStatus, addTransaction } = useAppContext();
+  
   const [isCreateOpen, setCreateOpen] = useState(false);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [dialogType, setDialogType] = useState<'details' | 'receipt' | null>(null);
 
   const handleCreateInvoice = (newInvoiceData: Omit<Invoice, 'invoice_id' | 'created_at' | 'updated_at' | 'supplier_user_id'>) => {
     if (!user || user.user_type !== 'Supplier') return;
-    const invoice: Invoice = {
-      ...newInvoiceData,
-      invoice_id: `inv${Date.now()}`,
-      supplier_user_id: user.user_id,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    };
-    setInvoices(prev => [invoice, ...prev]);
+    addInvoice(newInvoiceData, user.user_id);
     setCreateOpen(false);
   }
 
-  const handlePayInvoice = (invoiceId: string) => {
-    setInvoices(prev => prev.map(inv => inv.invoice_id === invoiceId ? { ...inv, status: 'paid' } : inv));
+  const handlePayInvoice = (invoiceId: string, invoiceNumber: string, amount: number, currency: string) => {
+    updateInvoiceStatus(invoiceId, 'paid');
+    
+    const paidInvoice = invoices.find(inv => inv.invoice_id === invoiceId);
+    if (user && paidInvoice) {
+        addTransaction({
+            sender_user_id: user.user_id,
+            receiver_user_id: paidInvoice.supplier_user_id,
+            amount,
+            currency,
+            transaction_type: 'invoice_payment',
+            status: 'completed',
+            invoice_id: invoiceId,
+        });
+    }
+
     toast({
       variant: "success",
       title: "Payment Successful",
-      description: `Invoice ${invoices.find(i=>i.invoice_id === invoiceId)?.invoice_number} has been paid.`,
+      description: `Invoice ${invoiceNumber} has been paid.`,
     });
   };
 
@@ -112,8 +120,8 @@ export default function InvoicesPage() {
                     <TableCell className="font-medium">{invoice.invoice_number}</TableCell>
                     <TableCell>
                       {user?.user_type === 'Importer' 
-                        ? getBusinessName(invoice.supplier_user_id) 
-                        : getBusinessName(invoice.importer_user_id)}
+                        ? getBusinessName(invoice.supplier_user_id, users) 
+                        : getBusinessName(invoice.importer_user_id, users)}
                     </TableCell>
                     <TableCell>${invoice.amount_due.toFixed(2)} {invoice.currency}</TableCell>
                     <TableCell>
@@ -134,7 +142,7 @@ export default function InvoicesPage() {
                           </DropdownMenuItem>
                           {user?.user_type === 'Importer' && invoice.status === 'unpaid' && (
                             <>
-                              <DropdownMenuItem onClick={() => handlePayInvoice(invoice.invoice_id)}>
+                              <DropdownMenuItem onClick={() => handlePayInvoice(invoice.invoice_id, invoice.invoice_number, invoice.amount_due, invoice.currency)}>
                                 <CreditCard className="mr-2 h-4 w-4" /> Pay Invoice
                               </DropdownMenuItem>
                                <QrCodeDialog invoice={invoice}>
@@ -163,7 +171,8 @@ export default function InvoicesPage() {
             <InvoiceDetailsDialog 
                 isOpen={true} 
                 onClose={handleCloseDialog} 
-                invoice={selectedInvoice} 
+                invoice={selectedInvoice}
+                users={users}
             />
         )}
         
@@ -171,8 +180,9 @@ export default function InvoicesPage() {
             <InvoiceReceiptDialog 
                 isOpen={true} 
                 onClose={handleCloseDialog} 
-                invoice={selectedInvoice} 
-                receipt={mockReceipts.find(r => r.invoice_id === selectedInvoice.invoice_id)} 
+                invoice={selectedInvoice}
+                users={users}
+                receipt={receipts.find(r => r.invoice_id === selectedInvoice.invoice_id)} 
             />
         )}
 

@@ -7,36 +7,31 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, PlusCircle, Edit, Trash2 } from 'lucide-react';
-import { organizations as mockOrganizations } from '@/lib/data';
 import type { Organization } from '@/lib/types';
 import { format } from 'date-fns';
 import { CreateOrgForm } from '@/components/dashboard/admin/create-org-form';
 import { DeleteOrgDialog } from '@/components/dashboard/admin/delete-org-dialog';
 import { EditOrgForm } from '@/components/dashboard/admin/edit-org-form';
 import { useState } from 'react';
+import { useAppContext } from '@/context/app-context';
 
 export default function OrganizationsPage() {
-  const [organizations, setOrganizations] = useState<Organization[]>(mockOrganizations);
+  const { organizations, addOrganization, updateOrganization, deleteOrganization } = useAppContext();
   const [isCreateOpen, setCreateOpen] = useState(false);
   const [editingOrg, setEditingOrg] = useState<Organization | null>(null);
 
   const handleOrgCreated = (newOrg: Omit<Organization, 'organization_id' | 'created_at'>) => {
-    const org: Organization = {
-      ...newOrg,
-      organization_id: `org${Date.now()}`,
-      created_at: new Date().toISOString(),
-    };
-    setOrganizations(prev => [org, ...prev]);
+    addOrganization(newOrg);
     setCreateOpen(false);
   };
   
   const handleOrgUpdated = (updatedOrg: Organization) => {
-    setOrganizations(prev => prev.map(o => o.organization_id === updatedOrg.organization_id ? updatedOrg : o));
+    updateOrganization(updatedOrg);
     setEditingOrg(null);
   }
 
   const handleOrgDeleted = (orgId: string) => {
-    setOrganizations(prev => prev.filter(o => o.organization_id !== orgId));
+    deleteOrganization(orgId);
   }
 
   return (

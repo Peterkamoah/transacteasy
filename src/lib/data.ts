@@ -117,6 +117,28 @@ export const transactions: Transaction[] = [
     status: 'completed',
     timestamp: '2024-06-20T09:00:00Z',
   },
+  {
+    transaction_id: 'txn3',
+    sender_user_id: 'importer1',
+    receiver_user_id: 'supplier1',
+    amount: 8000.00,
+    currency: 'USD',
+    transaction_type: 'invoice_payment',
+    status: 'completed',
+    invoice_id: 'inv_mock1',
+    timestamp: '2024-05-15T10:00:00Z',
+  },
+  {
+    transaction_id: 'txn4',
+    sender_user_id: 'importer1',
+    receiver_user_id: 'supplier1',
+    amount: 12000.00,
+    currency: 'USD',
+    transaction_type: 'invoice_payment',
+    status: 'completed',
+    invoice_id: 'inv_mock2',
+    timestamp: '2024-04-10T10:00:00Z',
+  },
 ];
 
 export const receipts: Receipt[] = [

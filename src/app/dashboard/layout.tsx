@@ -5,6 +5,7 @@ import { Sidebar, SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { SidebarNav } from "@/components/dashboard/sidebar-nav";
 import { useAuth } from "@/hooks/use-auth";
 import { LoginOverlay } from "@/components/dashboard/login-overlay";
+import { AppProvider } from "@/context/app-context";
 
 export default function DashboardLayout({
   children,
@@ -27,13 +28,15 @@ export default function DashboardLayout({
   }
 
   return (
-    <SidebarProvider>
-        <Sidebar>
-          <SidebarNav />
-        </Sidebar>
-        <SidebarInset>
-          {user ? children : <LoginOverlay />}
-        </SidebarInset>
-    </SidebarProvider>
+    <AppProvider>
+      <SidebarProvider>
+          <Sidebar>
+            <SidebarNav />
+          </Sidebar>
+          <SidebarInset>
+            {user ? children : <LoginOverlay />}
+          </SidebarInset>
+      </SidebarProvider>
+    </AppProvider>
   );
 }

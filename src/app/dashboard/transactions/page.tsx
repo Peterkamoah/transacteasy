@@ -6,15 +6,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { ArrowUpRight, ArrowDownLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
-import { transactions as mockTransactions } from '@/lib/data';
 import type { Transaction } from '@/lib/types';
 import { format } from 'date-fns';
 import { getBusinessName } from '@/lib/utils';
+import { useAppContext } from '@/context/app-context';
 
 export default function TransactionsPage() {
   const { user } = useAuth();
+  const { transactions, users } = useAppContext();
   
-  const userTransactions = mockTransactions.filter(tx => 
+  const userTransactions = transactions.filter(tx => 
     user?.user_type === 'Admin' || 
     tx.sender_user_id === user?.user_id || 
     tx.receiver_user_id === user?.user_id
@@ -29,9 +30,9 @@ export default function TransactionsPage() {
       return { Icon: ArrowUpRight, peer: 'Admin Debit', color: 'text-destructive' };
     }
     if (isSender) {
-       return { Icon: ArrowUpRight, peer: getBusinessName(tx.receiver_user_id), color: 'text-destructive' };
+       return { Icon: ArrowUpRight, peer: getBusinessName(tx.receiver_user_id, users), color: 'text-destructive' };
     }
-    return { Icon: ArrowDownLeft, peer: getBusinessName(tx.sender_user_id), color: 'text-success' };
+    return { Icon: ArrowDownLeft, peer: getBusinessName(tx.sender_user_id, users), color: 'text-success' };
   };
 
   return (
@@ -66,7 +67,7 @@ export default function TransactionsPage() {
                       </TableCell>
                       <TableCell>
                         <div className="font-medium">{peer}</div>
-                        <div className="text-sm text-muted-foreground capitalize">{tx.transaction_type.replace('_', ' ')}</div>
+                        <div className="text-sm text-muted-foreground capitalize">{tx.transaction_type.replace(/_/g, ' ')}</div>
                       </TableCell>
                       <TableCell>
                         <Badge variant={tx.status === 'completed' ? 'success' : 'destructive'}>
