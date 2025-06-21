@@ -103,7 +103,7 @@ export function SidebarNav({ isCollapsed = false }: { isCollapsed?: boolean }) {
   const menuItems = getMenuItems();
 
   return (
-    <div className="flex h-full flex-col gap-2 px-2">
+    <div className="flex h-full flex-col gap-2 overflow-y-auto p-2">
       <nav className="grid items-start gap-1 text-sm font-medium">
         {menuItems.map((item) => (
           <NavItem

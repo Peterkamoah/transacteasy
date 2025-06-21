@@ -36,9 +36,7 @@ export function Header() {
            <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
               <Logo />
           </div>
-          <div className="flex-1 overflow-y-auto py-4">
-             <SidebarNav />
-          </div>
+          <SidebarNav />
         </SheetContent>
       </Sheet>
       

@@ -52,12 +52,10 @@ export default function DashboardLayout({
                   <span className="sr-only">Toggle Sidebar</span>
                 </Button>
               </div>
-              <div className="flex-1 overflow-auto py-4">
-                <SidebarNav isCollapsed={isCollapsed} />
-              </div>
+              <SidebarNav isCollapsed={isCollapsed} />
             </div>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col overflow-hidden">
             <Header />
             <main className="flex-1 overflow-auto p-4 sm:px-6 sm:py-4">
               {children}
