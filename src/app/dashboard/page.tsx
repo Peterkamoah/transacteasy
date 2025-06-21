@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useAuth } from "@/hooks/use-auth";
 import { DollarSign, Users, FileText, ArrowRightLeft } from "lucide-react";
 import { invoices as mockInvoices, users as mockUsers, transactions as mockTransactions } from '@/lib/data';
+import { Button } from '@/components/ui/button';
 
 export default function DashboardPage() {
   const { user } = useAuth();
