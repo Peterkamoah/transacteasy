@@ -8,6 +8,9 @@ import { AppProvider } from "@/context/app-context";
 import { Header } from "@/components/dashboard/header";
 import { SidebarNav } from "@/components/dashboard/sidebar-nav";
 import { Logo } from "@/components/dashboard/logo";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function DashboardLayout({
   children,
@@ -16,6 +19,7 @@ export default function DashboardLayout({
 }) {
   const { user, loading } = useAuth();
   const [isMounted, setIsMounted] = React.useState(false);
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
 
   React.useEffect(() => {
     setIsMounted(true);
@@ -32,20 +36,32 @@ export default function DashboardLayout({
   return (
     <AppProvider>
       {user ? (
-        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+        <div className={cn(
+          "grid min-h-screen w-full transition-[grid-template-columns] duration-300 ease-in-out",
+          isCollapsed ? "md:grid-cols-[68px_1fr]" : "md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]"
+        )}>
           <div className="hidden border-r bg-muted/40 md:block">
-            <div className="flex h-full max-h-screen flex-col gap-2">
-              <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-                <Logo />
+            <div className="flex h-full max-h-screen flex-col">
+              <div className={cn(
+                "flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6",
+                isCollapsed && "justify-center px-2"
+              )}>
+                <Logo isCollapsed={isCollapsed} />
               </div>
-              <div className="flex-1 py-4">
-                <SidebarNav />
+              <div className="flex-1 overflow-auto py-4">
+                <SidebarNav isCollapsed={isCollapsed} />
+              </div>
+              <div className="mt-auto border-t p-2">
+                <Button variant="ghost" className="w-full justify-center" size="icon" onClick={() => setIsCollapsed(!isCollapsed)}>
+                  {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+                  <span className="sr-only">Toggle Sidebar</span>
+                </Button>
               </div>
             </div>
           </div>
           <div className="flex flex-col">
             <Header />
-            <main className="flex-1 p-4 sm:px-6 sm:py-4">
+            <main className="flex-1 overflow-auto p-4 sm:px-6 sm:py-4">
               {children}
             </main>
           </div>
