@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle, CreditCard, Receipt } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, CreditCard, Receipt, Eye, QrCode } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { invoices as mockInvoices } from '@/lib/data';
 import type { Invoice, InvoiceStatus } from '@/lib/types';
@@ -16,16 +16,31 @@ import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { CreateInvoiceForm } from '@/components/dashboard/invoices/create-invoice-form';
 import { getBusinessName } from '@/lib/utils';
+import { QrCodeDialog } from '@/components/dashboard/invoices/qr-code-dialog';
 
 export default function InvoicesPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [invoices, setInvoices] = useState<Invoice[]>(mockInvoices);
+  const [isCreateOpen, setCreateOpen] = useState(false);
+
+  const handleCreateInvoice = (newInvoice: Omit<Invoice, 'invoice_id' | 'created_at' | 'updated_at' | 'supplier_user_id'>) => {
+    if (!user || user.user_type !== 'Supplier') return;
+    const invoice: Invoice = {
+      ...newInvoice,
+      invoice_id: `inv${Date.now()}`,
+      supplier_user_id: user.user_id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    setInvoices(prev => [invoice, ...prev]);
+    setCreateOpen(false);
+  }
 
   const handlePayInvoice = (invoiceId: string) => {
-    // Simulate payment logic
     setInvoices(prev => prev.map(inv => inv.invoice_id === invoiceId ? { ...inv, status: 'paid' } : inv));
     toast({
+      variant: "success",
       title: "Payment Successful",
       description: `Invoice ${invoices.find(i=>i.invoice_id === invoiceId)?.invoice_number} has been paid.`,
     });
@@ -58,7 +73,7 @@ export default function InvoicesPage() {
               <CardDescription>Manage your incoming and outgoing invoices.</CardDescription>
             </div>
             {user?.user_type === 'Supplier' && (
-               <Dialog>
+               <Dialog open={isCreateOpen} onOpenChange={setCreateOpen}>
                 <DialogTrigger asChild>
                   <Button className="ml-auto gap-1" size="sm">
                     <PlusCircle className="h-4 w-4" />
@@ -70,7 +85,7 @@ export default function InvoicesPage() {
                     <DialogTitle>Create New Invoice</DialogTitle>
                     <DialogDescription>Fill in the details to create a new invoice.</DialogDescription>
                   </DialogHeader>
-                  <CreateInvoiceForm />
+                  <CreateInvoiceForm onInvoiceCreated={handleCreateInvoice} />
                 </DialogContent>
               </Dialog>
             )}
@@ -112,11 +127,20 @@ export default function InvoicesPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Eye className="mr-2 h-4 w-4" /> View Details
+                          </DropdownMenuItem>
                           {user?.user_type === 'Importer' && invoice.status === 'unpaid' && (
-                            <DropdownMenuItem onClick={() => handlePayInvoice(invoice.invoice_id)}>
-                              <CreditCard className="mr-2 h-4 w-4" /> Pay Invoice
-                            </DropdownMenuItem>
+                            <>
+                              <DropdownMenuItem onClick={() => handlePayInvoice(invoice.invoice_id)}>
+                                <CreditCard className="mr-2 h-4 w-4" /> Pay Invoice
+                              </DropdownMenuItem>
+                               <QrCodeDialog invoice={invoice}>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                  <QrCode className="mr-2 h-4 w-4" /> Pay with QR
+                                </DropdownMenuItem>
+                              </QrCodeDialog>
+                            </>
                           )}
                           {invoice.status === 'paid' && (
                             <DropdownMenuItem>

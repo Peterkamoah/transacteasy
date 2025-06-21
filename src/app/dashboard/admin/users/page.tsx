@@ -1,20 +1,43 @@
 "use client";
 
+import { useState } from 'react';
 import { Header } from '@/components/dashboard/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Edit, Trash2, Eye } from 'lucide-react';
 import { users as mockUsers } from '@/lib/data';
+import type { User } from '@/lib/types';
 import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CreateUserForm } from '@/components/dashboard/admin/create-user-form';
+import { DeleteUserDialog } from '@/components/dashboard/admin/delete-user-dialog';
 import { getInitials } from '@/lib/utils';
+import { KycStatusBadge } from '@/components/dashboard/kyc-status-badge';
 
 export default function UsersPage() {
+  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [isCreateOpen, setCreateOpen] = useState(false);
+  
+  const handleUserCreated = (newUser: Omit<User, 'user_id'|'created_at'|'updated_at'|'is_active'|'kyc_status'>) => {
+    const user: User = {
+      ...newUser,
+      user_id: `user${Date.now()}`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      is_active: true,
+      kyc_status: 'pending',
+    };
+    setUsers(prev => [user, ...prev]);
+    setCreateOpen(false);
+  }
+
+  const handleUserDeleted = (userId: string) => {
+    setUsers(prev => prev.filter(u => u.user_id !== userId));
+  }
 
   return (
     <div className="flex-1 space-y-4">
@@ -26,7 +49,7 @@ export default function UsersPage() {
               <CardTitle>Users</CardTitle>
               <CardDescription>Manage users on the platform.</CardDescription>
             </div>
-             <Dialog>
+             <Dialog open={isCreateOpen} onOpenChange={setCreateOpen}>
               <DialogTrigger asChild>
                 <Button className="ml-auto gap-1" size="sm">
                   <PlusCircle className="h-4 w-4" />
@@ -37,7 +60,7 @@ export default function UsersPage() {
                 <DialogHeader>
                   <DialogTitle>Create New User</DialogTitle>
                 </DialogHeader>
-                <CreateUserForm />
+                <CreateUserForm onUserCreated={handleUserCreated} />
               </DialogContent>
             </Dialog>
           </CardHeader>
@@ -56,7 +79,7 @@ export default function UsersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockUsers.map((user) => (
+                {users.map((user) => (
                   <TableRow key={user.user_id}>
                      <TableCell className="hidden sm:table-cell">
                         <Avatar>
@@ -66,13 +89,11 @@ export default function UsersPage() {
                     </TableCell>
                     <TableCell>
                       <div className="font-medium">{user.business_name}</div>
-                      <div className="text-sm text-muted-foreground md:hidden">{user.email}</div>
+                      <div className="hidden text-sm text-muted-foreground md:block">{user.email}</div>
                     </TableCell>
                     <TableCell>{user.user_type}</TableCell>
                     <TableCell>
-                      <Badge variant={user.kyc_status === 'verified' ? 'success' : 'destructive'}>
-                        {user.kyc_status}
-                      </Badge>
+                      <KycStatusBadge status={user.kyc_status} />
                     </TableCell>
                     <TableCell className="hidden md:table-cell">{format(new Date(user.created_at), 'MMM d, yyyy')}</TableCell>
                     <TableCell className="text-right">
@@ -84,9 +105,17 @@ export default function UsersPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>View Details</DropdownMenuItem>
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Eye className="mr-2 h-4 w-4" /> View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Edit className="mr-2 h-4 w-4" /> Edit
+                          </DropdownMenuItem>
+                           <DeleteUserDialog userId={user.user_id} userName={user.business_name} onUserDeleted={handleUserDeleted}>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
+                              <Trash2 className="mr-2 h-4 w-4" /> Delete
+                            </DropdownMenuItem>
+                          </DeleteUserDialog>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

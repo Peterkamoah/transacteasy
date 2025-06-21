@@ -11,26 +11,29 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) {
-    return null; // or a loading spinner
+  if (!isMounted || loading) {
+    return (
+       <div className="fixed inset-0 flex items-center justify-center bg-background">
+        <div className="text-lg font-semibold text-muted-foreground">Loading TransactEasy...</div>
+      </div>
+    );
   }
 
   return (
-    <SidebarProvider className="relative">
-      <Sidebar>
-        <SidebarNav />
-      </Sidebar>
-      <SidebarInset>
-        {children}
-      </SidebarInset>
-      {!user && <LoginOverlay />}
+    <SidebarProvider>
+        <Sidebar>
+          <SidebarNav />
+        </Sidebar>
+        <SidebarInset>
+          {user ? children : <LoginOverlay />}
+        </SidebarInset>
     </SidebarProvider>
   );
 }

@@ -4,16 +4,33 @@ import { Header } from '@/components/dashboard/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Edit, Trash2 } from 'lucide-react';
 import { organizations as mockOrganizations } from '@/lib/data';
 import type { Organization } from '@/lib/types';
 import { format } from 'date-fns';
 import { CreateOrgForm } from '@/components/dashboard/admin/create-org-form';
+import { DeleteOrgDialog } from '@/components/dashboard/admin/delete-org-dialog';
+import { useState } from 'react';
 
 export default function OrganizationsPage() {
-  const organizations: Organization[] = mockOrganizations;
+  const [organizations, setOrganizations] = useState<Organization[]>(mockOrganizations);
+  const [isCreateOpen, setCreateOpen] = useState(false);
+
+  const handleOrgCreated = (newOrg: Omit<Organization, 'organization_id' | 'created_at'>) => {
+    const org: Organization = {
+      ...newOrg,
+      organization_id: `org${Date.now()}`,
+      created_at: new Date().toISOString(),
+    };
+    setOrganizations(prev => [org, ...prev]);
+    setCreateOpen(false);
+  };
+  
+  const handleOrgDeleted = (orgId: string) => {
+    setOrganizations(prev => prev.filter(o => o.organization_id !== orgId));
+  }
 
   return (
     <div className="flex-1 space-y-4">
@@ -25,7 +42,7 @@ export default function OrganizationsPage() {
               <CardTitle>Organizations</CardTitle>
               <CardDescription>Manage business organizations on the platform.</CardDescription>
             </div>
-             <Dialog>
+             <Dialog open={isCreateOpen} onOpenChange={setCreateOpen}>
               <DialogTrigger asChild>
                 <Button className="ml-auto gap-1" size="sm">
                   <PlusCircle className="h-4 w-4" />
@@ -36,7 +53,7 @@ export default function OrganizationsPage() {
                 <DialogHeader>
                   <DialogTitle>Create New Organization</DialogTitle>
                 </DialogHeader>
-                <CreateOrgForm />
+                <CreateOrgForm onOrgCreated={handleOrgCreated} />
               </DialogContent>
             </Dialog>
           </CardHeader>
@@ -65,8 +82,14 @@ export default function OrganizationsPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Edit className="mr-2 h-4 w-4" /> Edit
+                          </DropdownMenuItem>
+                          <DeleteOrgDialog orgId={org.organization_id} orgName={org.name} onOrgDeleted={handleOrgDeleted}>
+                             <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
+                                <Trash2 className="mr-2 h-4 w-4" /> Delete
+                              </DropdownMenuItem>
+                          </DeleteOrgDialog>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
