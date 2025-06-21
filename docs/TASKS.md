@@ -8,6 +8,7 @@ This document tracks the major tasks required to implement the features outlined
     -   [x] Create `docs` directory.
     -   [x] Create `PRD.md` with detailed product requirements.
     -   [x] Create `TASKS.md` to track development progress.
+    -   [x] Create `CHANGELOG.md` for AI-driven change tracking.
 
 -   [x] **Authentication System**
     -   [x] Integrate Firebase SDK and initialize the app.

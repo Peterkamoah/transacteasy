@@ -77,6 +77,7 @@ The platform is designed for three primary user roles:
 *   **User Stories**:
     *   As a developer, I want a clear PRD to understand the product vision and goals.
     *   As a developer, I want a task list derived from the PRD to track implementation progress.
+    *   As a developer, I want a changelog that documents major AI-driven code changes in a commit-style format to understand the evolution of the codebase.
 
 ---
 
@@ -100,4 +101,3 @@ The platform is designed for three primary user roles:
 *   **Responsiveness**: All pages and components must be fully responsive and functional on mobile, tablet, and desktop screens.
 *   **Feedback**: Provide clear and immediate feedback for user actions (e.g., toasts for success/error, loading spinners for asynchronous operations, confirmation dialogs for destructive actions).
 *   **Modularity**: Build the UI from small, reusable, single-responsibility components.
-
