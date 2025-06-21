@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from 'react';
-import { Header } from '@/components/dashboard/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -47,9 +46,8 @@ export default function SmartInvoicePage() {
   };
 
   return (
-    <div className="flex-1 space-y-4">
-      <Header title="Smart Invoice" />
-      <main className="p-4 md:p-6 grid gap-6 md:grid-cols-2">
+    <div className="flex-1 space-y-4 p-4 pt-6 md:p-6">
+      <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Generate Invoice Suggestions</CardTitle>
@@ -118,7 +116,7 @@ export default function SmartInvoicePage() {
             )}
           </Card>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

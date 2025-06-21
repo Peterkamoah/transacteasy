@@ -1,7 +1,6 @@
 "use client"
 
 import { useMemo, useState } from 'react';
-import { Header } from "@/components/dashboard/header";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 import { DollarSign, Users, FileText, ArrowRightLeft, Lightbulb, Link as LinkIcon } from "lucide-react";
@@ -84,7 +83,7 @@ export default function DashboardPage() {
 
   const renderAdminDashboard = () => (
     <>
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Transaction Volume</CardTitle>
@@ -167,7 +166,7 @@ export default function DashboardPage() {
   );
 
   const renderUserDashboard = () => (
-     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Balance (USD)</CardTitle>
@@ -258,20 +257,17 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="flex-1 space-y-4">
-      <Header title="Dashboard" />
-      <main className="p-4 md:p-6">
-        {renderContent()}
-        <Dialog open={isCreateInvoiceOpen} onOpenChange={setCreateInvoiceOpen}>
-            <DialogContent>
-                <DialogHeader>
-                <DialogTitle>Create New Invoice</DialogTitle>
-                <DialogDescription>Fill in the details to create a new invoice.</DialogDescription>
-                </DialogHeader>
-                <CreateInvoiceForm onInvoiceCreated={handleCreateInvoice} />
-            </DialogContent>
-        </Dialog>
-      </main>
+    <div className="flex-1 space-y-4 p-4 pt-6 md:p-6">
+      {renderContent()}
+      <Dialog open={isCreateInvoiceOpen} onOpenChange={setCreateInvoiceOpen}>
+          <DialogContent>
+              <DialogHeader>
+              <DialogTitle>Create New Invoice</DialogTitle>
+              <DialogDescription>Fill in the details to create a new invoice.</DialogDescription>
+              </DialogHeader>
+              <CreateInvoiceForm onInvoiceCreated={handleCreateInvoice} />
+          </DialogContent>
+      </Dialog>
     </div>
   );
 }

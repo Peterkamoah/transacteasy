@@ -1,6 +1,5 @@
 "use client";
 
-import { Header } from '@/components/dashboard/header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -56,64 +55,61 @@ export default function TransactionsPage() {
 
 
   return (
-    <div className="flex-1 space-y-4">
-      <Header title="Transactions" />
-      <main className="p-4 md:p-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Transaction History</CardTitle>
-            <CardDescription>A record of all your financial movements.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[80px]">Type</TableHead>
-                  <TableHead>Details</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
-                  <TableHead className="text-right">Date</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {userTransactions.map((tx) => {
-                  const { Icon, peer, color, prefix } = getTxnDirectionInfo(tx);
-                  return (
-                    <TableRow key={tx.transaction_id}>
-                      <TableCell>
-                        <div className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                            color === 'text-muted-foreground' ? 'bg-muted' : color === 'text-success' ? 'bg-success/10' : 'bg-destructive/10'
-                        }`}>
-                           <Icon className={`h-5 w-5 ${color}`} />
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">{peer}</div>
-                        <div className="text-sm text-muted-foreground capitalize">{tx.transaction_type.replace(/_/g, ' ')}</div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={
-                          tx.status === 'completed' ? 'success'
-                          : tx.status === 'failed' ? 'destructive'
-                          : 'secondary'
-                        }>
-                          {tx.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className={`text-right font-medium ${color}`}>
-                        {prefix} ${tx.amount.toFixed(2)} {tx.currency}
-                      </TableCell>
-                       <TableCell className="text-right text-sm text-muted-foreground">
-                        {format(new Date(tx.timestamp), 'MMM d, yyyy, hh:mm a')}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </main>
+    <div className="flex-1 space-y-4 p-4 pt-6 md:p-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Transaction History</CardTitle>
+          <CardDescription>A record of all your financial movements.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[80px]">Type</TableHead>
+                <TableHead>Details</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="text-right">Date</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {userTransactions.map((tx) => {
+                const { Icon, peer, color, prefix } = getTxnDirectionInfo(tx);
+                return (
+                  <TableRow key={tx.transaction_id}>
+                    <TableCell>
+                      <div className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                          color === 'text-muted-foreground' ? 'bg-muted' : color === 'text-success' ? 'bg-success/10' : 'bg-destructive/10'
+                      }`}>
+                         <Icon className={`h-5 w-5 ${color}`} />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="font-medium">{peer}</div>
+                      <div className="text-sm text-muted-foreground capitalize">{tx.transaction_type.replace(/_/g, ' ')}</div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={
+                        tx.status === 'completed' ? 'success'
+                        : tx.status === 'failed' ? 'destructive'
+                        : 'secondary'
+                      }>
+                        {tx.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className={`text-right font-medium ${color}`}>
+                      {prefix} ${tx.amount.toFixed(2)} {tx.currency}
+                    </TableCell>
+                     <TableCell className="text-right text-sm text-muted-foreground">
+                      {format(new Date(tx.timestamp), 'MMM d, yyyy, hh:mm a')}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }

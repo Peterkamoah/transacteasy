@@ -4,8 +4,6 @@
 import {
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/use-auth";
@@ -23,6 +21,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./logo";
+import { Button } from "@/components/ui/button";
 
 const commonMenuItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -68,31 +67,30 @@ export function SidebarNav() {
         </SidebarHeader>
         <SidebarMenu className="flex-1 overflow-y-auto p-4">
           {menuItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === item.href}
-                className="justify-start"
-              >
-                <Link href={item.href}>
-                  <item.icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            <Button
+              key={item.href}
+              asChild
+              variant={pathname === item.href ? "secondary" : "ghost"}
+              className="w-full justify-start"
+            >
+              <Link href={item.href}>
+                <item.icon className="h-5 w-5 mr-2" />
+                <span>{item.label}</span>
+              </Link>
+            </Button>
           ))}
         </SidebarMenu>
         <SidebarFooter className="p-4">
-            <SidebarMenuButton asChild className="justify-start" isActive={pathname === '/dashboard/settings'}>
+            <Button asChild variant={pathname === '/dashboard/settings' ? 'secondary' : 'ghost'} className="w-full justify-start">
               <Link href="/dashboard/settings">
-                <Settings className="h-5 w-5" />
+                <Settings className="h-5 w-5 mr-2" />
                 <span>Settings</span>
               </Link>
-            </SidebarMenuButton>
-            <SidebarMenuButton className="w-full justify-start" onClick={logout}>
-                <LogOut className="h-5 w-5" />
+            </Button>
+            <Button className="w-full justify-start" variant="ghost" onClick={logout}>
+                <LogOut className="h-5 w-5 mr-2" />
                 <span>Logout</span>
-            </SidebarMenuButton>
+            </Button>
         </SidebarFooter>
     </>
   );

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Header } from '@/components/dashboard/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -57,105 +56,102 @@ export default function SettingsPage() {
   }
   
   return (
-    <div className="flex-1 space-y-4">
-      <Header title="Settings" />
-      <main className="p-4 md:p-6">
-        <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 max-w-md">
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="password">Password</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          </TabsList>
-          <TabsContent value="profile">
-            <Card>
-              <CardHeader>
-                <CardTitle>Profile</CardTitle>
-                <CardDescription>Manage your public profile and account details.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleProfileSubmit} className="space-y-4 max-w-xl">
-                  <div className="space-y-2">
-                    <Label htmlFor="businessName">Business Name</Label>
-                    <Input id="business_name" value={profileData.business_name} onChange={handleProfileChange} />
+    <div className="flex-1 space-y-4 p-4 pt-6 md:p-6">
+      <Tabs defaultValue="profile" className="w-full">
+        <TabsList className="grid w-full grid-cols-3 max-w-md">
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="password">Password</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+        </TabsList>
+        <TabsContent value="profile">
+          <Card>
+            <CardHeader>
+              <CardTitle>Profile</CardTitle>
+              <CardDescription>Manage your public profile and account details.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleProfileSubmit} className="space-y-4 max-w-xl">
+                <div className="space-y-2">
+                  <Label htmlFor="businessName">Business Name</Label>
+                  <Input id="business_name" value={profileData.business_name} onChange={handleProfileChange} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input id="email" type="email" value={user?.email} readOnly disabled />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="vatId">VAT ID</Label>
+                  <Input id="vat_id" value={profileData.vat_id} onChange={handleProfileChange} />
+                </div>
+                 <div className="space-y-2">
+                  <Label htmlFor="contactInfo">Contact Information</Label>
+                  <Input id="contact_info" value={profileData.contact_info} onChange={handleProfileChange} />
+                </div>
+                <Button type="submit">Save Changes</Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="password">
+           <Card>
+            <CardHeader>
+              <CardTitle>Change Password</CardTitle>
+              <CardDescription>Update your password here. For security, you will be logged out after.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handlePasswordSubmit} className="space-y-4 max-w-xl">
+                <div className="space-y-2">
+                  <Label htmlFor="currentPassword">Current Password</Label>
+                  <Input id="currentPassword" type="password" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">New Password</Label>
+                  <Input id="newPassword" type="password" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                  <Input id="confirmPassword" type="password" />
+                </div>
+                <Button type="submit">Change Password</Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="notifications">
+          <Card>
+            <CardHeader>
+              <CardTitle>Notifications</CardTitle>
+              <CardDescription>Manage how you receive notifications from TransactEasy.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleNotificationsSubmit} className="space-y-6 max-w-xl">
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                          <Label htmlFor="email-notifications" className="text-base">Email Notifications</Label>
+                          <p className="text-sm text-muted-foreground">Receive updates about invoices and payments via email.</p>
+                      </div>
+                      <Switch id="email-notifications" defaultChecked />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" defaultValue={user?.email} readOnly disabled />
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                          <Label htmlFor="push-notifications" className="text-base">Push Notifications</Label>
+                          <p className="text-sm text-muted-foreground">Get real-time alerts on your devices.</p>
+                      </div>
+                      <Switch id="push-notifications" />
                   </div>
-                   <div className="space-y-2">
-                    <Label htmlFor="vatId">VAT ID</Label>
-                    <Input id="vat_id" value={profileData.vat_id} onChange={handleProfileChange} />
+                  <div className="flex items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                          <Label htmlFor="marketing-emails" className="text-base">Marketing Emails</Label>
+                          <p className="text-sm text-muted-foreground">Receive news, feature updates, and special offers.</p>
+                      </div>
+                      <Switch id="marketing-emails" defaultChecked />
                   </div>
-                   <div className="space-y-2">
-                    <Label htmlFor="contactInfo">Contact Information</Label>
-                    <Input id="contact_info" value={profileData.contact_info} onChange={handleProfileChange} />
-                  </div>
-                  <Button type="submit">Save Changes</Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="password">
-             <Card>
-              <CardHeader>
-                <CardTitle>Change Password</CardTitle>
-                <CardDescription>Update your password here. For security, you will be logged out after.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handlePasswordSubmit} className="space-y-4 max-w-xl">
-                  <div className="space-y-2">
-                    <Label htmlFor="currentPassword">Current Password</Label>
-                    <Input id="currentPassword" type="password" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="newPassword">New Password</Label>
-                    <Input id="newPassword" type="password" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                    <Input id="confirmPassword" type="password" />
-                  </div>
-                  <Button type="submit">Change Password</Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="notifications">
-            <Card>
-              <CardHeader>
-                <CardTitle>Notifications</CardTitle>
-                <CardDescription>Manage how you receive notifications from TransactEasy.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleNotificationsSubmit} className="space-y-6 max-w-xl">
-                    <div className="flex items-center justify-between rounded-lg border p-4">
-                        <div className="space-y-0.5">
-                            <Label htmlFor="email-notifications" className="text-base">Email Notifications</Label>
-                            <p className="text-sm text-muted-foreground">Receive updates about invoices and payments via email.</p>
-                        </div>
-                        <Switch id="email-notifications" defaultChecked />
-                    </div>
-                    <div className="flex items-center justify-between rounded-lg border p-4">
-                        <div className="space-y-0.5">
-                            <Label htmlFor="push-notifications" className="text-base">Push Notifications</Label>
-                            <p className="text-sm text-muted-foreground">Get real-time alerts on your devices.</p>
-                        </div>
-                        <Switch id="push-notifications" />
-                    </div>
-                    <div className="flex items-center justify-between rounded-lg border p-4">
-                        <div className="space-y-0.5">
-                            <Label htmlFor="marketing-emails" className="text-base">Marketing Emails</Label>
-                            <p className="text-sm text-muted-foreground">Receive news, feature updates, and special offers.</p>
-                        </div>
-                        <Switch id="marketing-emails" defaultChecked />
-                    </div>
-                  <Button type="submit">Save Preferences</Button>
-                </form>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </main>
+                <Button type="submit">Save Preferences</Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
