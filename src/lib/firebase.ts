@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
+import { getAuth, type Auth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -17,28 +17,26 @@ const firebaseConfig = {
 
 // Validate the Firebase config to provide a more helpful error message.
 const hasPlaceholderValues = Object.values(firebaseConfig).some(
-  (value) => !value || value.startsWith('YOUR_')
+  (value) => !value || value.startsWith('YOUR_') || value.includes('your-project-id')
 );
 
-if (hasPlaceholderValues) {
-  throw new Error(
-    'Firebase configuration is incomplete. Please open the `.env` file and replace all "YOUR_..." placeholder values with your actual Firebase project credentials.'
-  );
-}
+export const isFirebaseConfigured = !hasPlaceholderValues;
 
 // Initialize Firebase
-let app;
-let auth;
+let app: FirebaseApp | undefined;
+let auth: Auth | undefined;
 
-try {
-  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-  auth = getAuth(app);
-} catch (error) {
-  console.error("Firebase initialization error:", error);
-  throw new Error(
-    "Failed to initialize Firebase. Please double-check that the credentials in your .env file are correct."
-  );
+if (isFirebaseConfigured) {
+  try {
+    app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+    auth = getAuth(app);
+  } catch (error) {
+    console.error("Firebase initialization error:", error);
+    // If config is provided but fails, it's a real error.
+    throw new Error(
+      "Failed to initialize Firebase. Please double-check that the credentials in your .env file are correct."
+    );
+  }
 }
-
 
 export { app, auth };

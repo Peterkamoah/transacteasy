@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useMemo, ReactNode, useEffect } from 'react';
-import { auth } from '@/lib/firebase';
+import { auth, isFirebaseConfigured } from '@/lib/firebase';
 import { onAuthStateChanged, signInAnonymously, signOut, type User as FirebaseUser } from 'firebase/auth';
 import type { User, UserType } from '@/lib/types';
 import { users } from '@/lib/data';
@@ -13,6 +13,7 @@ type AuthContextType = {
   loading: boolean;
   login: (userType: UserType) => void;
   logout: () => void;
+  isConfigured: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,7 +25,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (fbUser) => {
+    if (!isFirebaseConfigured) {
+      setLoading(false);
+      return;
+    }
+    // Auth is guaranteed to be defined here if isFirebaseConfigured is true
+    const unsubscribe = onAuthStateChanged(auth!, (fbUser) => {
       setFirebaseUser(fbUser);
       if (fbUser) {
         // User is signed in with Firebase. Now get our app-specific user profile.
@@ -68,6 +74,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const login = async (userType: UserType) => {
+    if (!isFirebaseConfigured) return;
+
     setLoading(true);
     try {
       // Find the mock user profile for the selected role
@@ -77,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       
       // Sign in anonymously with Firebase
-      await signInAnonymously(auth);
+      await signInAnonymously(auth!);
 
       // Set our application's user state and save to local storage
       setCurrentUser(userToLogin);
@@ -98,9 +106,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
+    if (!isFirebaseConfigured) return;
     setLoading(true);
     try {
-      await signOut(auth);
+      await signOut(auth!);
     } catch (error) {
        console.error("Firebase signout error:", error);
        toast({
@@ -121,6 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     login,
     logout,
+    isConfigured: isFirebaseConfigured,
   }), [currentUser, firebaseUser, loading]);
 
   return (
