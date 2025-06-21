@@ -56,7 +56,7 @@ export function SidebarNav() {
 
   return (
     <div className="flex h-full flex-col gap-2 px-2 lg:px-4">
-      <nav className="flex-1 grid items-start gap-1 text-sm font-medium">
+      <nav className="grid items-start gap-1 text-sm font-medium">
         {menuItems.map((item) => (
           <Button
             key={item.href}
