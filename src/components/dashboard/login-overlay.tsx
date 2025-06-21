@@ -3,29 +3,16 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Loader2, AlertTriangle } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Loader2 } from "lucide-react";
 
 export function LoginOverlay() {
-  const { login, loading, isConfigured } = useAuth();
+  const { login, loading } = useAuth();
 
   const handleLogin = (userType: 'Importer' | 'Supplier' | 'Admin') => {
     login(userType);
   }
 
   const renderContent = () => {
-    if (!isConfigured) {
-      return (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Configuration Required</AlertTitle>
-          <AlertDescription>
-            Your Firebase credentials are not set. Please open the <strong>.env</strong> file, add your project credentials, and then refresh this page.
-          </AlertDescription>
-        </Alert>
-      );
-    }
-
     if (loading) {
       return (
          <div className="flex justify-center items-center p-10">
