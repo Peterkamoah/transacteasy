@@ -43,19 +43,17 @@ export default function DashboardLayout({
           <div className="hidden border-r bg-muted/40 md:block">
             <div className="flex h-full max-h-screen flex-col">
               <div className={cn(
-                "flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6",
-                isCollapsed && "justify-center px-2"
+                "flex h-14 items-center justify-between border-b lg:h-[60px]",
+                isCollapsed ? "px-2" : "px-4 lg:px-6"
               )}>
                 <Logo isCollapsed={isCollapsed} />
-              </div>
-              <div className="flex-1 overflow-auto py-4">
-                <SidebarNav isCollapsed={isCollapsed} />
-              </div>
-              <div className="mt-auto border-t p-2">
-                <Button variant="ghost" className="w-full justify-center" size="icon" onClick={() => setIsCollapsed(!isCollapsed)}>
+                <Button variant="ghost" size="icon" onClick={() => setIsCollapsed(!isCollapsed)}>
                   {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
                   <span className="sr-only">Toggle Sidebar</span>
                 </Button>
+              </div>
+              <div className="flex-1 overflow-auto py-4">
+                <SidebarNav isCollapsed={isCollapsed} />
               </div>
             </div>
           </div>
