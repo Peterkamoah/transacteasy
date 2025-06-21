@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from 'react-hook-form';
@@ -13,7 +14,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type { User } from '@/lib/types';
 
 const formSchema = z.object({
-  user_id: z.string({ required_error: "Please select a user." }),
+  user_id: z.string({ required_error: "Please select a user." }).min(1, "Please select a user."),
   amount: z.coerce.number().positive("Amount must be a positive number."),
   currency: z.enum(['USD', 'EUR'], { required_error: "Please select a currency." }),
   action: z.enum(['credit', 'debit'], { required_error: "Please select an action." }),
@@ -32,6 +33,9 @@ export const AdminWalletForm = ({ users, onFundsManaged }: AdminWalletFormProps)
     resolver: zodResolver(formSchema),
     defaultValues: {
       action: 'credit',
+      user_id: '',
+      amount: 0,
+      currency: '',
     },
   });
 
@@ -56,7 +60,7 @@ export const AdminWalletForm = ({ users, onFundsManaged }: AdminWalletFormProps)
             render={({ field }) => (
               <FormItem>
                 <FormLabel>User</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a user to manage funds" />
@@ -80,7 +84,15 @@ export const AdminWalletForm = ({ users, onFundsManaged }: AdminWalletFormProps)
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Amount</FormLabel>
-                <FormControl><Input type="number" placeholder="1000.00" {...field} /></FormControl>
+                <FormControl>
+                  <Input 
+                    type="number" 
+                    placeholder="1000.00" 
+                    {...field} 
+                    value={field.value || ''}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -91,7 +103,7 @@ export const AdminWalletForm = ({ users, onFundsManaged }: AdminWalletFormProps)
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Currency</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger><SelectValue placeholder="Select currency" /></SelectTrigger>
                   </FormControl>

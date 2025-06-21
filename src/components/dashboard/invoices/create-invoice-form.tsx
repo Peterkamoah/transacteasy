@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from 'react-hook-form';
@@ -18,7 +19,7 @@ import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 
 const formSchema = z.object({
-  importer_user_id: z.string({ required_error: "Please select an importer." }),
+  importer_user_id: z.string({ required_error: "Please select an importer." }).min(1, "Please select an importer."),
   invoice_number: z.string().min(1, "Invoice number is required."),
   amount_due: z.coerce.number().positive("Amount must be positive."),
   currency: z.enum(['USD', 'EUR'], { required_error: "Please select a currency." }),
@@ -40,9 +41,13 @@ export const CreateInvoiceForm = ({ onInvoiceCreated }: CreateInvoiceFormProps) 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      amount_due: 0,
       status: 'unpaid',
       issue_date: new Date().toISOString().split('T')[0], // Today's date
+      invoice_number: '',
+      importer_user_id: '',
+      amount_due: 0,
+      currency: '',
+      due_date: undefined
     },
   });
 
@@ -66,7 +71,7 @@ export const CreateInvoiceForm = ({ onInvoiceCreated }: CreateInvoiceFormProps) 
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Bill To (Importer)</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select an importer" />
@@ -102,7 +107,15 @@ export const CreateInvoiceForm = ({ onInvoiceCreated }: CreateInvoiceFormProps) 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Amount Due</FormLabel>
-                  <FormControl><Input type="number" placeholder="1000.00" {...field} /></FormControl>
+                  <FormControl>
+                    <Input 
+                        type="number" 
+                        placeholder="1000.00" 
+                        {...field}
+                        value={field.value || ''}
+                        onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -113,7 +126,7 @@ export const CreateInvoiceForm = ({ onInvoiceCreated }: CreateInvoiceFormProps) 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Currency</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger><SelectValue placeholder="Select currency" /></SelectTrigger>
                     </FormControl>

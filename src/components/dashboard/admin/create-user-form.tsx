@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from 'react-hook-form';
@@ -33,6 +34,7 @@ export const CreateUserForm = ({ onUserCreated }: CreateUserFormProps) => {
       email: "",
       vat_id: "",
       contact_info: "",
+      user_type: undefined,
     },
   });
 
@@ -82,7 +84,7 @@ export const CreateUserForm = ({ onUserCreated }: CreateUserFormProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>User Role</FormLabel>
-                 <Select onValueChange={field.onChange} defaultValue={field.value}>
+                 <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a role" />
