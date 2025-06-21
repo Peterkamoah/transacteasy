@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { Logo } from "./logo";
 
 export function LoginOverlay() {
   const { login, loading } = useAuth();
@@ -33,7 +34,10 @@ export function LoginOverlay() {
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
       <Card className="w-[420px] shadow-2xl">
-        <CardHeader className="text-center">
+        <CardHeader className="items-center text-center">
+            <div className="mb-4">
+                <Logo />
+            </div>
           <CardTitle className="text-2xl">Welcome to TransactEasy</CardTitle>
           <CardDescription>Select a user role to sign in</CardDescription>
         </CardHeader>
