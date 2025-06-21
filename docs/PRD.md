@@ -73,11 +73,12 @@ The platform is designed for three primary user roles:
     *   As a **Supplier**, I want to understand the reasoning behind the AI's suggestions.
 
 ### 3.7. AI Change Tracking System
-*   **Description**: A meta-feature for development. A structured documentation system within the codebase to track requirements and tasks.
+*   **Description**: A meta-feature for development. A structured documentation system within the codebase to track requirements, tasks, changes, and errors.
 *   **User Stories**:
     *   As a developer, I want a clear PRD to understand the product vision and goals.
     *   As a developer, I want a task list derived from the PRD to track implementation progress.
     *   As a developer, I want a changelog that documents major AI-driven code changes in a commit-style format to understand the evolution of the codebase.
+    *   As a developer, I want a log of past errors and their solutions to avoid repeating mistakes and to understand the system's history.
 
 ---
 
