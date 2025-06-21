@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -65,7 +66,7 @@ export function SidebarNav() {
         <SidebarHeader className="p-4">
              <Logo />
         </SidebarHeader>
-        <SidebarMenu className="flex-1 p-4">
+        <SidebarMenu className="flex-1 overflow-y-auto p-4">
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <SidebarMenuButton
