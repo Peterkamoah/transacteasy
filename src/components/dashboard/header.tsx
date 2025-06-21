@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LogOut, Menu, User as UserIcon, Settings } from "lucide-react";
-import { useSidebar } from "../ui/sidebar";
+import { useSidebar, SidebarTrigger } from "../ui/sidebar";
 
 const UserNav = () => {
   const { user, logout } = useAuth();
@@ -64,9 +64,9 @@ const UserNav = () => {
 };
 
 export function Header({ title }: { title: string }) {
-   const { open, setOpenMobile } = useSidebar()
+   const { setOpenMobile } = useSidebar()
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
       <Button
         variant="outline"
         size="icon"
@@ -76,11 +76,12 @@ export function Header({ title }: { title: string }) {
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle navigation menu</span>
       </Button>
-      <div className="flex w-full items-center gap-4">
-        <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
-        <div className="ml-auto flex items-center gap-4">
-          <UserNav />
-        </div>
+      <div className="hidden md:block">
+        <SidebarTrigger />
+      </div>
+      <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
+      <div className="ml-auto flex items-center gap-4">
+        <UserNav />
       </div>
     </header>
   );

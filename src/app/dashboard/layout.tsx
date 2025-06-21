@@ -47,16 +47,14 @@ export default function DashboardLayout({
   }
 
   return (
-    <SidebarProvider>
-      <div className="relative min-h-screen">
-        <Sidebar>
-          <SidebarNav />
-        </Sidebar>
-        <SidebarInset>
-          {children}
-        </SidebarInset>
-        {!user && <LoginOverlay />}
-      </div>
+    <SidebarProvider className="relative">
+      <Sidebar>
+        <SidebarNav />
+      </Sidebar>
+      <SidebarInset>
+        {children}
+      </SidebarInset>
+      {!user && <LoginOverlay />}
     </SidebarProvider>
   );
 }
