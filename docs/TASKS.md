@@ -34,21 +34,33 @@ This document tracks the major tasks required to implement the features outlined
     -   [x] Ensure all new features are fully mobile-responsive.
     -   [x] Review and apply consistent iconography and styling.
 
-### Phase 2: Advanced Features & Polish (Future)
+### Phase 2: UI/UX Polish & Feature Completion
+
+-   [x] **UI/UX Overhaul**
+    -   [x] Update color theme in `globals.css` to a modern, professional palette.
+    -   [x] Redesign dashboard cards for better visual appeal.
+    -   [x] Make dashboard stats dynamic based on mock data.
+
+-   [x] **Complete Core Feature Actions**
+    -   [x] Implement "View Details" for invoices with a dedicated dialog.
+    -   [x] Implement "View Receipt" for paid invoices with a dedicated dialog.
+    -   [x] Implement "Edit" functionality for Users and Organizations.
+    -   [x] Make the "Profile" settings form fully functional.
+    -   [x] Add a functional "Notifications" settings form.
+
+-   [x] **Payment Flow Simulation**
+    -   [x] Enhance QR code dialog to include "Alipay" branding and simulate payment.
+    -   [x] Ensure "Pay Invoice" action correctly updates invoice status.
+
+### Phase 3: Advanced Features & Polish (Future)
 
 -   [ ] **Real-time Updates**
     -   [ ] Integrate Firestore to reflect data changes in real-time (e.g., invoice status).
 
 -   [ ] **Full Firebase Auth**
+    -   [ ] Re-enable live Firebase Authentication.
     -   [ ] Implement Email/Password sign-up and sign-in flow.
     -   [ ] Add "Forgot Password" functionality.
-
--   [ ] **Profile Management**
-    -   [ ] Allow users to update their own profile information in the Settings page.
-    -   [ ] Implement password change functionality.
-
--   [ ] **Notification System**
-    -   [ ] Implement a notification system (e.g., when an invoice is paid or becomes overdue).
 
 -   [ ] **AI Tool Enhancements**
     -   [ ] Use historical data from Firestore to provide more accurate AI suggestions.

@@ -26,12 +26,15 @@ export function QrCodeDialog({ invoice, children }: QrCodeDialogProps) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Pay Invoice {invoice.invoice_number}</DialogTitle>
+           <div className="flex items-center gap-2">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Alipay_logo.svg" alt="Alipay" className="h-6" />
+            <DialogTitle>Pay with Alipay</DialogTitle>
+           </div>
           <DialogDescription>
-            Scan the QR code with your payment app to pay <strong>${invoice.amount_due.toFixed(2)} {invoice.currency}</strong>.
+            Scan the QR code with your Alipay app to pay <strong>${invoice.amount_due.toFixed(2)} {invoice.currency}</strong> for invoice {invoice.invoice_number}.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex justify-center items-center p-6 bg-white rounded-md">
+        <div className="flex justify-center items-center p-6 bg-white rounded-md mt-4">
            <QRCode value={qrValue} size={256} />
         </div>
       </DialogContent>

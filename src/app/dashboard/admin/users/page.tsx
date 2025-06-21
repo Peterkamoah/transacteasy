@@ -5,7 +5,6 @@ import { Header } from '@/components/dashboard/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, PlusCircle, Edit, Trash2, Eye } from 'lucide-react';
@@ -15,12 +14,14 @@ import { format } from 'date-fns';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CreateUserForm } from '@/components/dashboard/admin/create-user-form';
 import { DeleteUserDialog } from '@/components/dashboard/admin/delete-user-dialog';
+import { EditUserForm } from '@/components/dashboard/admin/edit-user-form';
 import { getInitials } from '@/lib/utils';
 import { KycStatusBadge } from '@/components/dashboard/kyc-status-badge';
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [isCreateOpen, setCreateOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
   
   const handleUserCreated = (newUser: Omit<User, 'user_id'|'created_at'|'updated_at'|'is_active'|'kyc_status'>) => {
     const user: User = {
@@ -33,6 +34,11 @@ export default function UsersPage() {
     };
     setUsers(prev => [user, ...prev]);
     setCreateOpen(false);
+  }
+
+  const handleUserUpdated = (updatedUser: User) => {
+    setUsers(prev => prev.map(u => u.user_id === updatedUser.user_id ? updatedUser : u));
+    setEditingUser(null);
   }
 
   const handleUserDeleted = (userId: string) => {
@@ -97,27 +103,35 @@ export default function UsersPage() {
                     </TableCell>
                     <TableCell className="hidden md:table-cell">{format(new Date(user.created_at), 'MMM d, yyyy')}</TableCell>
                     <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" /> View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" /> Edit
-                          </DropdownMenuItem>
-                           <DeleteUserDialog userId={user.user_id} userName={user.business_name} onUserDeleted={handleUserDeleted}>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
-                              <Trash2 className="mr-2 h-4 w-4" /> Delete
+                       <Dialog open={!!editingUser && editingUser.user_id === user.user_id} onOpenChange={() => setEditingUser(null)}>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem>
+                              <Eye className="mr-2 h-4 w-4" /> View Details
                             </DropdownMenuItem>
-                          </DeleteUserDialog>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                            <DropdownMenuItem onClick={() => setEditingUser(user)}>
+                              <Edit className="mr-2 h-4 w-4" /> Edit
+                            </DropdownMenuItem>
+                            <DeleteUserDialog userId={user.user_id} userName={user.business_name} onUserDeleted={handleUserDeleted}>
+                              <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-destructive focus:text-destructive">
+                                <Trash2 className="mr-2 h-4 w-4" /> Delete
+                              </DropdownMenuItem>
+                            </DeleteUserDialog>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                         <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Edit User</DialogTitle>
+                          </DialogHeader>
+                          {editingUser && <EditUserForm user={editingUser} onUserUpdated={handleUserUpdated} />}
+                        </DialogContent>
+                      </Dialog>
                     </TableCell>
                   </TableRow>
                 ))}

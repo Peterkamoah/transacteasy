@@ -5,29 +5,33 @@ import { Header } from '@/components/dashboard/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, PlusCircle, CreditCard, Receipt, Eye, QrCode } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
-import { invoices as mockInvoices } from '@/lib/data';
-import type { Invoice, InvoiceStatus } from '@/lib/types';
+import { invoices as mockInvoices, receipts as mockReceipts } from '@/lib/data';
+import type { Invoice, InvoiceStatus, Receipt as ReceiptType } from '@/lib/types';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
 import { CreateInvoiceForm } from '@/components/dashboard/invoices/create-invoice-form';
 import { getBusinessName } from '@/lib/utils';
 import { QrCodeDialog } from '@/components/dashboard/invoices/qr-code-dialog';
+import { InvoiceDetailsDialog } from '@/components/dashboard/invoices/invoice-details-dialog';
+import { InvoiceReceiptDialog } from '@/components/dashboard/invoices/invoice-receipt-dialog';
+import { KycStatusBadge } from '@/components/dashboard/kyc-status-badge';
 
 export default function InvoicesPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [invoices, setInvoices] = useState<Invoice[]>(mockInvoices);
   const [isCreateOpen, setCreateOpen] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const [dialogType, setDialogType] = useState<'details' | 'receipt' | null>(null);
 
-  const handleCreateInvoice = (newInvoice: Omit<Invoice, 'invoice_id' | 'created_at' | 'updated_at' | 'supplier_user_id'>) => {
+  const handleCreateInvoice = (newInvoiceData: Omit<Invoice, 'invoice_id' | 'created_at' | 'updated_at' | 'supplier_user_id'>) => {
     if (!user || user.user_type !== 'Supplier') return;
     const invoice: Invoice = {
-      ...newInvoice,
+      ...newInvoiceData,
       invoice_id: `inv${Date.now()}`,
       supplier_user_id: user.user_id,
       created_at: new Date().toISOString(),
@@ -46,22 +50,22 @@ export default function InvoicesPage() {
     });
   };
 
+  const handleOpenDialog = (invoice: Invoice, type: 'details' | 'receipt') => {
+    setSelectedInvoice(invoice);
+    setDialogType(type);
+  }
+
+  const handleCloseDialog = () => {
+    setSelectedInvoice(null);
+    setDialogType(null);
+  }
+
   const userInvoices = invoices.filter(inv => 
     user?.user_type === 'Admin' || 
     inv.importer_user_id === user?.user_id || 
     inv.supplier_user_id === user?.user_id
   );
   
-  const getBadgeVariant = (status: InvoiceStatus) => {
-    switch (status) {
-      case 'paid': return 'success';
-      case 'overdue': return 'destructive';
-      case 'unpaid': return 'outline';
-      case 'cancelled': return 'secondary';
-      default: return 'default';
-    }
-  }
-
   return (
     <div className="flex-1 space-y-4">
       <Header title="Invoices" />
@@ -113,9 +117,7 @@ export default function InvoicesPage() {
                     </TableCell>
                     <TableCell>${invoice.amount_due.toFixed(2)} {invoice.currency}</TableCell>
                     <TableCell>
-                      <Badge variant={getBadgeVariant(invoice.status)}>
-                        {invoice.status}
-                      </Badge>
+                      <KycStatusBadge status={invoice.status as any} />
                     </TableCell>
                     <TableCell>{format(new Date(invoice.due_date), 'MMM d, yyyy')}</TableCell>
                     <TableCell className="text-right">
@@ -127,7 +129,7 @@ export default function InvoicesPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleOpenDialog(invoice, 'details')}>
                             <Eye className="mr-2 h-4 w-4" /> View Details
                           </DropdownMenuItem>
                           {user?.user_type === 'Importer' && invoice.status === 'unpaid' && (
@@ -143,7 +145,7 @@ export default function InvoicesPage() {
                             </>
                           )}
                           {invoice.status === 'paid' && (
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleOpenDialog(invoice, 'receipt')}>
                                <Receipt className="mr-2 h-4 w-4" /> View Receipt
                             </DropdownMenuItem>
                           )}
@@ -156,6 +158,24 @@ export default function InvoicesPage() {
             </Table>
           </CardContent>
         </Card>
+
+        {selectedInvoice && dialogType === 'details' && (
+            <InvoiceDetailsDialog 
+                isOpen={true} 
+                onClose={handleCloseDialog} 
+                invoice={selectedInvoice} 
+            />
+        )}
+        
+        {selectedInvoice && dialogType === 'receipt' && (
+            <InvoiceReceiptDialog 
+                isOpen={true} 
+                onClose={handleCloseDialog} 
+                invoice={selectedInvoice} 
+                receipt={mockReceipts.find(r => r.invoice_id === selectedInvoice.invoice_id)} 
+            />
+        )}
+
       </main>
     </div>
   );

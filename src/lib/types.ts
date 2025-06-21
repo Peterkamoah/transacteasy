@@ -64,6 +64,7 @@ export type Transaction = {
 export type Receipt = {
   receipt_id: string;
   transaction_id: string;
+  invoice_id: string;
   receipt_number: string;
   generation_date: string;
   url_to_document: string;

@@ -1,4 +1,4 @@
-import type { User, Wallet, Invoice, Transaction, Organization } from './types';
+import type { User, Wallet, Invoice, Transaction, Organization, Receipt } from './types';
 
 export const organizations: Organization[] = [
   { organization_id: 'org1', name: 'Global Imports Inc.', created_at: new Date().toISOString() },
@@ -117,4 +117,17 @@ export const transactions: Transaction[] = [
     status: 'completed',
     timestamp: '2024-06-20T09:00:00Z',
   },
+];
+
+export const receipts: Receipt[] = [
+    {
+        receipt_id: 'rec1',
+        transaction_id: 'txn1',
+        invoice_id: 'inv2',
+        receipt_number: 'RCT-2024-001',
+        generation_date: '2024-07-10T10:00:05Z',
+        url_to_document: '/receipts/rec1.pdf',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+    }
 ];

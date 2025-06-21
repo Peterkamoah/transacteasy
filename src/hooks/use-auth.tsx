@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useMemo, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useState, useMemo, ReactNode, useEffect, useCallback } from 'react';
 import type { User, UserType } from '@/lib/types';
 import { users } from '@/lib/data';
 import { useToast } from './use-toast';
@@ -16,6 +16,7 @@ type AuthContextType = {
   loading: boolean;
   login: (userType: UserType) => void;
   logout: () => void;
+  updateUser: (updatedUser: User) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,15 +40,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setLoading(false);
   }, []);
+  
+  const updateUser = useCallback((updatedUser: User) => {
+    setCurrentUser(updatedUser);
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+  }, []);
 
   const login = (userType: UserType) => {
     setLoading(true);
     // Find the mock user profile for the selected role
     const userToLogin = users.find(u => u.user_type === userType);
     if (userToLogin) {
-      setCurrentUser(userToLogin);
-      // Save to local storage to simulate session persistence
-      localStorage.setItem('currentUser', JSON.stringify(userToLogin));
+      updateUser(userToLogin);
     } else {
       toast({
         variant: 'destructive',
@@ -70,7 +74,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     login,
     logout,
-  }), [currentUser, loading]);
+    updateUser
+  }), [currentUser, loading, updateUser]);
 
   return (
     <AuthContext.Provider value={value}>
