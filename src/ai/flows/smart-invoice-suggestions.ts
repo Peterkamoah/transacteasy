@@ -67,12 +67,7 @@ const prompt = ai.definePrompt({
   Invoice Items: {{{invoiceItems}}}
 
   Consider all these data points carefully to provide the best possible suggestion.
-  Ensure to output a valid JSON, according to the output schema.
-  {{~#json SmartInvoiceSuggestionsOutputSchema}}{{
-    suggestedInvoiceAmount: suggestedInvoiceAmount,
-    suggestedPaymentPlan: suggestedPaymentPlan,
-    reasoning: reasoning
-  }}{{~/json}}`,
+  Ensure to output a valid JSON, according to the output schema.`,
 });
 
 const smartInvoiceSuggestionsFlow = ai.defineFlow(
