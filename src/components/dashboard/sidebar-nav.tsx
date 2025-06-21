@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Sidebar,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
@@ -90,25 +89,26 @@ export function SidebarNav() {
         <SidebarMenu className="flex-1 p-4">
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} legacyBehavior passHref>
-                <SidebarMenuButton
-                  isActive={pathname === item.href}
-                  className="justify-start"
-                >
+              <SidebarMenuButton
+                asChild
+                isActive={pathname === item.href}
+                className="justify-start"
+              >
+                <Link href={item.href}>
                   <item.icon className="h-5 w-5" />
                   <span>{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
         <SidebarFooter className="p-4">
-            <Link href="/dashboard/settings" legacyBehavior passHref>
-                 <SidebarMenuButton className="justify-start">
-                    <Settings className="h-5 w-5" />
-                    <span>Settings</span>
-                </SidebarMenuButton>
-            </Link>
+            <SidebarMenuButton asChild className="justify-start">
+              <Link href="/dashboard/settings">
+                <Settings className="h-5 w-5" />
+                <span>Settings</span>
+              </Link>
+            </SidebarMenuButton>
             <Button variant="ghost" className="w-full justify-start gap-2 px-3" onClick={logout}>
                 <LogOut className="h-5 w-5" />
                 <span>Logout</span>
