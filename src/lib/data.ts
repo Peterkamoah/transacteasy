@@ -47,10 +47,10 @@ export const users: User[] = [
 ];
 
 export const wallets: Wallet[] = [
-  { wallet_id: 'w1', user_id: 'importer1', currency: 'USD', balance: 50000.00, created_at: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  { wallet_id: 'w2', user_id: 'importer1', currency: 'EUR', balance: 25000.00, created_at: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  { wallet_id: 'w3', user_id: 'supplier1', currency: 'USD', balance: 120000.00, created_at: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  { wallet_id: 'w4', user_id: 'admin1', currency: 'USD', balance: 1000000.00, created_at: new Date().toISOString(), updatedAt: new Date().toISOString() },
+  { wallet_id: 'w1', user_id: 'importer1', currency: 'USD', balance: 50000.00, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { wallet_id: 'w2', user_id: 'importer1', currency: 'EUR', balance: 25000.00, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { wallet_id: 'w3', user_id: 'supplier1', currency: 'USD', balance: 120000.00, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { wallet_id: 'w4', user_id: 'admin1', currency: 'USD', balance: 1000000.00, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
 ];
 
 export const invoices: Invoice[] = [

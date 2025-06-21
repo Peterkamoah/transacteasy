@@ -3,36 +3,15 @@
 import { Header } from '@/components/dashboard/header';
 import { useAuth } from '@/hooks/use-auth';
 import { wallets as mockWallets } from '@/lib/data';
-import type { Wallet } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { DollarSign, ArrowDown, ArrowUp } from 'lucide-react';
-
-
-const AdminWalletForm = () => {
-  const { toast } = useToast();
-  return (
-    <form onSubmit={(e) => {
-      e.preventDefault();
-      toast({ title: "Success!", description: "Funds operation completed." });
-      // Logic for crediting/debiting wallet
-    }}>
-      <div className="grid gap-4 py-4">
-        <p className="text-sm text-muted-foreground">Admin wallet operation form fields (user select, amount, currency, action) would be here.</p>
-      </div>
-      <DialogFooter>
-        <Button type="submit">Execute</Button>
-      </DialogFooter>
-    </form>
-  )
-}
+import { AdminWalletForm } from '@/components/dashboard/wallets/admin-wallet-form';
 
 
 export default function WalletsPage() {
   const { user } = useAuth();
-  const { toast } = useToast();
   
   const userWallets = user?.user_type === 'Admin' 
     ? mockWallets 

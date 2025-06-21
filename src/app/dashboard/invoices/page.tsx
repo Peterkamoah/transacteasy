@@ -6,34 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, PlusCircle, CreditCard, Receipt } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
-import { invoices as mockInvoices, users as mockUsers } from '@/lib/data';
-import type { Invoice } from '@/lib/types';
+import { invoices as mockInvoices } from '@/lib/data';
+import type { Invoice, InvoiceStatus } from '@/lib/types';
 import { format } from 'date-fns';
 import { useToast } from '@/hooks/use-toast';
-
-const CreateInvoiceForm = () => {
-  // In a real app, this would use react-hook-form and zod for validation
-  const { toast } = useToast();
-  return (
-    <form onSubmit={(e) => {
-      e.preventDefault();
-      toast({ title: "Success!", description: "Invoice created and sent." });
-      // Here you would call a server action or API to create the invoice
-    }}>
-      <div className="grid gap-4 py-4">
-        {/* Form fields for creating invoice would go here */}
-        <p className="text-sm text-muted-foreground">Invoice creation form fields would be here. Submitting will show a success toast.</p>
-      </div>
-       <DialogFooter>
-          <Button type="submit">Create Invoice</Button>
-        </DialogFooter>
-    </form>
-  )
-}
+import { CreateInvoiceForm } from '@/components/dashboard/invoices/create-invoice-form';
+import { getBusinessName } from '@/lib/utils';
 
 export default function InvoicesPage() {
   const { user } = useAuth();
@@ -48,14 +30,22 @@ export default function InvoicesPage() {
       description: `Invoice ${invoices.find(i=>i.invoice_id === invoiceId)?.invoice_number} has been paid.`,
     });
   };
-  
-  const getBusinessName = (userId: string) => mockUsers.find(u => u.user_id === userId)?.business_name || 'Unknown';
 
   const userInvoices = invoices.filter(inv => 
     user?.user_type === 'Admin' || 
     inv.importer_user_id === user?.user_id || 
     inv.supplier_user_id === user?.user_id
   );
+  
+  const getBadgeVariant = (status: InvoiceStatus) => {
+    switch (status) {
+      case 'paid': return 'success';
+      case 'overdue': return 'destructive';
+      case 'unpaid': return 'outline';
+      case 'cancelled': return 'secondary';
+      default: return 'default';
+    }
+  }
 
   return (
     <div className="flex-1 space-y-4">
@@ -108,7 +98,7 @@ export default function InvoicesPage() {
                     </TableCell>
                     <TableCell>${invoice.amount_due.toFixed(2)} {invoice.currency}</TableCell>
                     <TableCell>
-                      <Badge variant={invoice.status === 'paid' ? 'secondary' : 'default'} className={invoice.status === 'unpaid' ? 'bg-amber-500' : invoice.status === 'overdue' ? 'bg-red-500' : 'bg-green-500'}>
+                      <Badge variant={getBadgeVariant(invoice.status)}>
                         {invoice.status}
                       </Badge>
                     </TableCell>

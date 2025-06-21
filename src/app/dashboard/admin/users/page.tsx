@@ -10,28 +10,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreHorizontal, PlusCircle } from 'lucide-react';
 import { users as mockUsers } from '@/lib/data';
 import { format } from 'date-fns';
-import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
-const CreateUserForm = () => {
-  const { toast } = useToast();
-  return (
-    <form onSubmit={(e) => {
-      e.preventDefault();
-      toast({ title: "Success!", description: "User created." });
-    }}>
-      <div className="grid gap-4 py-4">
-        <p className="text-sm text-muted-foreground">User creation form fields (e.g., name, email, role) would be here.</p>
-      </div>
-       <DialogFooter>
-          <Button type="submit">Create User</Button>
-        </DialogFooter>
-    </form>
-  )
-}
+import { CreateUserForm } from '@/components/dashboard/admin/create-user-form';
+import { getInitials } from '@/lib/utils';
 
 export default function UsersPage() {
-  const getInitials = (name: string) => name.split(' ').map(n => n[0]).join('');
 
   return (
     <div className="flex-1 space-y-4">
@@ -87,7 +70,7 @@ export default function UsersPage() {
                     </TableCell>
                     <TableCell>{user.user_type}</TableCell>
                     <TableCell>
-                      <Badge variant={user.kyc_status === 'verified' ? 'secondary' : 'destructive'} className={user.kyc_status === 'verified' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
+                      <Badge variant={user.kyc_status === 'verified' ? 'success' : 'destructive'}>
                         {user.kyc_status}
                       </Badge>
                     </TableCell>

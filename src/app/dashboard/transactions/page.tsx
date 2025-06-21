@@ -4,34 +4,34 @@ import { Header } from '@/components/dashboard/header';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUpRight, ArrowDownLeft, ArrowRightLeft } from 'lucide-react';
+import { ArrowUpRight, ArrowDownLeft } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
-import { transactions as mockTransactions, users as mockUsers } from '@/lib/data';
+import { transactions as mockTransactions } from '@/lib/data';
+import type { Transaction } from '@/lib/types';
 import { format } from 'date-fns';
+import { getBusinessName } from '@/lib/utils';
 
 export default function TransactionsPage() {
   const { user } = useAuth();
   
-  const getBusinessName = (userId: string) => mockUsers.find(u => u.user_id === userId)?.business_name || 'System';
-
   const userTransactions = mockTransactions.filter(tx => 
     user?.user_type === 'Admin' || 
     tx.sender_user_id === user?.user_id || 
     tx.receiver_user_id === user?.user_id
   );
 
-  const getTxnIconAndPeer = (tx: (typeof mockTransactions)[0]) => {
+  const getTxnIconAndPeer = (tx: Transaction) => {
     const isSender = tx.sender_user_id === user?.user_id;
     if (tx.transaction_type === 'admin_credit') {
-      return { Icon: ArrowDownLeft, peer: 'Admin Credit', color: 'text-green-500' };
+      return { Icon: ArrowDownLeft, peer: 'Admin Credit', color: 'text-success' };
     }
     if (tx.transaction_type === 'admin_debit') {
-      return { Icon: ArrowUpRight, peer: 'Admin Debit', color: 'text-red-500' };
+      return { Icon: ArrowUpRight, peer: 'Admin Debit', color: 'text-destructive' };
     }
     if (isSender) {
-       return { Icon: ArrowUpRight, peer: getBusinessName(tx.receiver_user_id), color: 'text-red-500' };
+       return { Icon: ArrowUpRight, peer: getBusinessName(tx.receiver_user_id), color: 'text-destructive' };
     }
-    return { Icon: ArrowDownLeft, peer: getBusinessName(tx.sender_user_id), color: 'text-green-500' };
+    return { Icon: ArrowDownLeft, peer: getBusinessName(tx.sender_user_id), color: 'text-success' };
   };
 
   return (
@@ -69,7 +69,7 @@ export default function TransactionsPage() {
                         <div className="text-sm text-muted-foreground capitalize">{tx.transaction_type.replace('_', ' ')}</div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={tx.status === 'completed' ? 'secondary' : 'destructive'} className={tx.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                        <Badge variant={tx.status === 'completed' ? 'success' : 'destructive'}>
                           {tx.status}
                         </Badge>
                       </TableCell>
