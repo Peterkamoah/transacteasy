@@ -15,8 +15,30 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Validate the Firebase config to provide a more helpful error message.
+const hasPlaceholderValues = Object.values(firebaseConfig).some(
+  (value) => !value || value.startsWith('YOUR_')
+);
+
+if (hasPlaceholderValues) {
+  throw new Error(
+    'Firebase configuration is incomplete. Please open the `.env` file and replace all "YOUR_..." placeholder values with your actual Firebase project credentials.'
+  );
+}
+
 // Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
+let app;
+let auth;
+
+try {
+  app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+  auth = getAuth(app);
+} catch (error) {
+  console.error("Firebase initialization error:", error);
+  throw new Error(
+    "Failed to initialize Firebase. Please double-check that the credentials in your .env file are correct."
+  );
+}
+
 
 export { app, auth };
