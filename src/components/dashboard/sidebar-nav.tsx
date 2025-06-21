@@ -103,16 +103,16 @@ export function SidebarNav() {
           ))}
         </SidebarMenu>
         <SidebarFooter className="p-4">
-            <SidebarMenuButton asChild className="justify-start">
+            <SidebarMenuButton asChild className="justify-start" isActive={pathname === '/dashboard/settings'}>
               <Link href="/dashboard/settings">
                 <Settings className="h-5 w-5" />
                 <span>Settings</span>
               </Link>
             </SidebarMenuButton>
-            <Button variant="ghost" className="w-full justify-start gap-2 px-3" onClick={logout}>
+            <SidebarMenuButton className="w-full justify-start" onClick={logout}>
                 <LogOut className="h-5 w-5" />
                 <span>Logout</span>
-            </Button>
+            </SidebarMenuButton>
         </SidebarFooter>
     </>
   );
